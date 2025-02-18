@@ -69,6 +69,22 @@ class Bullet(Sprite):
     def move(self):
         self.rect.y -= self.speed
 
+def initialize_game():
+    global player, points, lost, enemies, bullets, points_lb, lost_lb, finish, menu, enemy_spawn_counter
+    player = Player(750, 950, 100, 100, pygame.image.load("rocket.png"), 15)
+    points = 0
+    lost = 0
+    enemies = []
+    for _ in range(4): 
+        enemy = Enemy(randint(0, win_w-100), randint(-250, -50), 100, 100, pygame.image.load("ufo.png"), randint(1, 2))
+        enemies.append(enemy)
+    bullets = []
+    points_lb = font_stat.render(f"вбито: {points}", True, (0, 255, 0))
+    lost_lb = font_stat.render(f"пропущено: {lost}", True, (255, 255, 255))
+    finish = False
+    menu = False
+    enemy_spawn_counter = 0
+
 
 player = Player(750, 950, 100, 100, pygame.image.load("rocket.png"), 15)
 
@@ -77,8 +93,8 @@ lost = 0
 
 enemies = []
 
-for _ in range(4): 
-    enemy = Enemy(randint(0, win_w-100), randint(-250, -50), 100, 100, pygame.image.load("ufo.png"), randint(1, 2))
+for _ in range(8): 
+    enemy = Enemy(randint(0, win_w-100), randint(-250, -50), 100, 100, pygame.image.load("ufo.png"), randint(2, 6))
     enemies.append(enemy)
 
 
@@ -87,20 +103,25 @@ bullets = []
 bullet_image = pygame.image.load("bullet.png")
 bullet_speed = 10
 
-
+font_record = pygame.font.SysFont("Arial", 80)
 font_stat = pygame.font.SysFont("Arial", 15)
 points_lb = font_stat.render(f"вбито: {points}", True, (0, 255, 0))
 lost_lb = font_stat.render(f"вбито: {lost}", True, (0, 255, 0))
 
-font_lost = pygame.font.SysFont("Arial", 50)
+font_lost = pygame.font.SysFont("Arial Black", 250)
 lost_message = font_lost.render("You Lost", True, (255, 0, 0))
 
 but_img = pygame.image.load("button1.png")
 button = Sprite(200, 200, 600, 150, but_img)
 
+def new_record(record, score):
+    if record < score:
+        with open("record.txt", "w", encoding="Utf-8") as file:
+            file.write(str(score))
+        window.blit(font_record.render(f"Новий рекорд {score}", True,(255,255,255)), (200, 0))   
+
 game = True
 finish = False
-
 menu = True
 
 enemy_spawn_counter = 0
@@ -122,8 +143,10 @@ while game:
             enemy.move()
             enemy.draw()
 
-        if lost == 5:
+        if lost >= 5:
+            new_record(record, points)
             finish = True
+
 
         for bullet in bullets:
             bullet.move()
@@ -143,12 +166,13 @@ while game:
         for enemy in enemies:
             if player.rect.colliderect(enemy.rect):
                 finish = True
+                new_record(record, points)
                 break
 
         enemy_spawn_counter += 1
         if enemy_spawn_counter >= enemy_spawn_frequency:
             enemy_spawn_counter = 0
-            enemy = Enemy(randint(0, win_w-100), randint(-250, -50), 100, 100, pygame.image.load("ufo.png"), randint(1, 2))
+            enemy = Enemy(randint(0, win_w-100), randint(-250, -50), 100, 100, pygame.image.load("ufo.png"), randint(2, 6))
             enemies.append(enemy)
                     
         window.blit(points_lb, (10, 10))
@@ -173,8 +197,8 @@ while game:
             if event.key == pygame.K_SPACE:
                 bullet = Bullet(player.rect.centerx - 5, player.rect.top, 100, 200, bullet_image, bullet_speed)
                 bullets.append(bullet)
-
-
+            if event.key == pygame.K_r and finish:
+                initialize_game()
         
 
     pygame.display.update()
