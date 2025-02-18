@@ -24,8 +24,6 @@ try:
 except:
     record = 0
 
-print(record)
-
 class Sprite:
     def __init__(self, x, y, w, h, image):
         self.rect = pygame.Rect(x, y, w, h)
