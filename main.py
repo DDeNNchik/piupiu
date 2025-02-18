@@ -18,6 +18,14 @@ background = pygame.transform.scale(background, (win_w, win_h))
 background1 = pygame.image.load("galaxy2.jpg")
 background1 = pygame.transform.scale(background1, (win_w, win_h))
 
+try:
+    with open("record.txt", "r", encoding="Utf-8") as file:
+        record = int(file.read())
+except:
+    record = 0
+
+print(record)
+
 class Sprite:
     def __init__(self, x, y, w, h, image):
         self.rect = pygame.Rect(x, y, w, h)
@@ -87,8 +95,8 @@ lost_lb = font_stat.render(f"вбито: {lost}", True, (0, 255, 0))
 font_lost = pygame.font.SysFont("Arial", 50)
 lost_message = font_lost.render("You Lost", True, (255, 0, 0))
 
-but_img = pygame.image.load("button.png")
-button = Sprite(200, 200, 200, 50, but_img)
+but_img = pygame.image.load("button1.png")
+button = Sprite(200, 200, 600, 150, but_img)
 
 game = True
 finish = False
@@ -113,6 +121,9 @@ while game:
         for enemy in enemies:
             enemy.move()
             enemy.draw()
+
+        if lost == 5:
+            finish = True
 
         for bullet in bullets:
             bullet.move()
@@ -160,8 +171,10 @@ while game:
                 pygame.mixer.music.play(-1)
         if event.type == pygame.KEYDOWN:
             if event.key == pygame.K_SPACE:
-                bullet = Bullet(player.rect.centerx - 5, player.rect.top, 10, 20, bullet_image, bullet_speed)
+                bullet = Bullet(player.rect.centerx - 5, player.rect.top, 100, 200, bullet_image, bullet_speed)
                 bullets.append(bullet)
+
+
         
 
     pygame.display.update()
