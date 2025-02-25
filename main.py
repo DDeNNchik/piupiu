@@ -108,6 +108,7 @@ lost_lb = font_stat.render(f"вбито: {lost}", True, (0, 255, 0))
 
 font_lost = pygame.font.SysFont("Arial Black", 250)
 lost_message = font_lost.render("You Lost", True, (255, 0, 0))
+play_again_message = font_record.render("R - play again", True, (255, 0, 0))
 
 but_img = pygame.image.load("button1.png")
 button = Sprite(200, 200, 600, 150, but_img)
@@ -125,7 +126,7 @@ menu = True
 enemy_spawn_counter = 0
 enemy_spawn_frequency = 60
 
-pygame.mixer.music.set_volume(0.03)
+pygame.mixer.music.set_volume(0.01)
 
 while game:
     if menu:
@@ -178,8 +179,8 @@ while game:
 
     if finish:
         window.blit(lost_message, (win_w // 2 - lost_message.get_width() // 2, win_h // 2 - lost_message.get_height() // 2))
+        window.blit(play_again_message, (win_w // 2 - play_again_message.get_width() // 2, win_h // 2 + lost_message.get_height() // 2))
 
-        
 
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
